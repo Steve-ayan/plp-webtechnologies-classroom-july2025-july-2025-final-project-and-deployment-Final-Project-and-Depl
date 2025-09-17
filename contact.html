@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Steve Graphics | Contact</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/script.js"></script>
 </head>
 <body>
 
@@ -30,19 +29,21 @@
   <section class="contact-section" style="padding: 60px 20px; background: #222;">
     <h2 style="color: #fff; text-align:center; margin-bottom: 40px;">Contact Me</h2>
 
-    <!-- ✅ Correct Formspree form -->
     <form id="contact-form" action="https://formspree.io/f/xblavkbn" method="POST">
-      <label for="name" style="color:#fff;">Name</label>
-      <input type="text" id="name" name="name" placeholder="Your Name" required>
+      <label for="name">Your Name</label>
+      <input type="text" id="name" name="name" required>
 
-      <label for="email" style="color:#fff;">Email</label>
-      <input type="email" id="email" name="email" placeholder="Your Email" required>
+      <label for="email">Your Email</label>
+      <input type="email" id="email" name="email" required>
 
-      <label for="message" style="color:#fff;">Message</label>
-      <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+      <label for="message">Your Message</label>
+      <textarea id="message" name="message" required></textarea>
 
       <button type="submit">Send Message</button>
     </form>
+
+    <!-- Alert messages -->
+    <div id="form-status" style="text-align:center; margin-top:15px; font-weight:bold;"></div>
 
     <!-- Connect with Me Section -->
     <div class="connect" id="connect-links">
@@ -61,20 +62,35 @@
     </p>
   </footer>
 
-  <!-- Scroll Animation Script -->
+  <!-- Form Handling Script -->
   <script>
-    const observerOptions = { threshold: 0.1 };
-    const observer = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
-        if(entry.isIntersecting){
-          entry.target.classList.add('show');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
+    const form = document.getElementById("contact-form");
+    const statusDiv = document.getElementById("form-status");
 
-    const targets = document.querySelectorAll('#contact-form, #connect-links');
-    targets.forEach(target => observer.observe(target));
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+
+      try {
+        const response = await fetch(form.action, {
+          method: form.method,
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+          statusDiv.style.color = "lightgreen";
+          statusDiv.innerText = "✅ Message sent successfully!";
+          form.reset();
+        } else {
+          statusDiv.style.color = "red";
+          statusDiv.innerText = "❌ Oops! Something went wrong.";
+        }
+      } catch (error) {
+        statusDiv.style.color = "red";
+        statusDiv.innerText = "⚠️ Network error. Please try again.";
+      }
+    });
   </script>
 
 </body>
